@@ -1761,6 +1761,502 @@
 
 <body>
 
+<!-- ══ ENVELOPE INTRO OVERLAY ══ -->
+<div id="envelope-overlay">
+  <div id="env-scene">
+
+    <!-- Floating petals background -->
+    <div class="env-petals">
+      <span class="petal p1">🌸</span>
+      <span class="petal p2">🌺</span>
+      <span class="petal p3">🌸</span>
+      <span class="petal p4">🌸</span>
+      <span class="petal p5">🌺</span>
+      <span class="petal p6">🌸</span>
+    </div>
+
+    <!-- Pre-open state: sealed envelope -->
+    <div id="env-sealed">
+      <div class="env-label">You're Invited</div>
+      <div class="env-names">Vithun &amp; Keerthika</div>
+      <div class="env-date">07 · 06 · 2026</div>
+    </div>
+
+    <!-- The envelope itself -->
+    <div id="envelope" class="sealed">
+      <!-- Back of envelope (bottom) -->
+      <div class="env-back"></div>
+
+      <!-- Left flap -->
+      <div class="env-flap-left"></div>
+      <!-- Right flap -->
+      <div class="env-flap-right"></div>
+      <!-- Bottom flap -->
+      <div class="env-flap-bottom"></div>
+
+      <!-- Top flap (opens) -->
+      <div class="env-flap-top">
+        <div class="env-wax-seal">
+          <span>V</span>
+          <span class="seal-amp">&amp;</span>
+          <span>K</span>
+        </div>
+      </div>
+
+      <!-- The letter / card inside -->
+      <div class="env-letter">
+        <div class="letter-inner">
+          <div class="letter-eyebrow">You Are Cordially Invited</div>
+          <div class="letter-script">Vithun &amp; Keerthika</div>
+          <div class="letter-date">07 June 2026 · Vellore</div>
+          <div class="letter-divider"></div>
+          <div class="letter-verse">Two hearts, one beautiful journey</div>
+          <button id="view-btn" onclick="openWebsite()">
+            <span class="btn-text">Open Invitation</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Click hint -->
+    <div id="env-hint">
+      <div class="hint-dot"></div>
+      <span>Tap to open</span>
+    </div>
+
+  </div>
+</div>
+
+<style>
+/* ══ ENVELOPE OVERLAY ══ */
+#envelope-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: radial-gradient(ellipse at 60% 40%, #f5d9d5 0%, #f0c4be 35%, #e8a89f 65%, #d9887e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+
+#envelope-overlay.hide {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.06);
+}
+
+/* Petals */
+.env-petals {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.petal {
+  position: absolute;
+  font-size: clamp(16px, 2.5vw, 26px);
+  opacity: 0.35;
+  animation: petal-fall linear infinite;
+}
+
+.p1 { left: 8%;  animation-duration: 8s;  animation-delay: 0s;   top: -40px; }
+.p2 { left: 22%; animation-duration: 11s; animation-delay: 2s;   top: -40px; }
+.p3 { left: 45%; animation-duration: 9s;  animation-delay: 1.5s; top: -40px; }
+.p4 { left: 65%; animation-duration: 12s; animation-delay: 0.5s; top: -40px; }
+.p5 { left: 80%; animation-duration: 7s;  animation-delay: 3s;   top: -40px; }
+.p6 { left: 90%; animation-duration: 10s; animation-delay: 1s;   top: -40px; }
+
+@keyframes petal-fall {
+  0%   { transform: translateY(0) rotate(0deg);   opacity: 0; }
+  10%  { opacity: 0.35; }
+  90%  { opacity: 0.25; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+/* Scene wrapper */
+#env-scene {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+/* Pre-label above envelope */
+#env-sealed {
+  text-align: center;
+  color: #6b2e2a;
+  animation: env-float 3s ease-in-out infinite;
+}
+
+@keyframes env-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+.env-label {
+  font-family: 'Jost', sans-serif;
+  font-size: 10px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: rgba(107, 46, 42, 0.72);
+  margin-bottom: 8px;
+}
+
+.env-names {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(32px, 6vw, 54px);
+  color: #6b2e2a;
+  line-height: 1;
+  text-shadow: 0 2px 12px rgba(107, 46, 42, 0.18);
+}
+
+.env-date {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: rgba(107, 46, 42, 0.62);
+  margin-top: 6px;
+}
+
+/* ── THE ENVELOPE ── */
+#envelope {
+  position: relative;
+  width: clamp(280px, 52vw, 520px);
+  height: clamp(200px, 34vw, 360px);
+  cursor: pointer;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 24px 60px rgba(120, 40, 30, 0.28));
+}
+
+/* Envelope back */
+.env-back {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #fff8f5 0%, #fdeee9 60%, #f8ddd6 100%);
+  border-radius: 4px 4px 6px 6px;
+  border: 1px solid rgba(200, 112, 106, 0.25);
+}
+
+/* Left flap */
+.env-flap-left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 var(--fh, 180px) var(--fw, 260px);
+  border-color: transparent transparent #f2cec8 transparent;
+  border-radius: 0 0 0 4px;
+}
+
+/* Right flap */
+.env-flap-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: var(--fh, 180px) 0 0 var(--fw, 260px);
+  border-color: transparent transparent transparent #ead5cf;
+  border-radius: 0 0 4px 0;
+}
+
+/* Bottom flap */
+.env-flap-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, #fde8e3 0%, #f5cec6 100%);
+  clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+  border-radius: 0 0 4px 4px;
+}
+
+/* Top flap */
+.env-flap-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: linear-gradient(180deg, #f9e5e1 0%, #f2d0c9 100%);
+  clip-path: polygon(0% 0%, 50% 90%, 100% 0%);
+  transform-origin: top center;
+  border-radius: 4px 4px 0 0;
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;
+  border: 1px solid rgba(200, 112, 106, 0.15);
+}
+
+/* Open: flap rotates back */
+#envelope.open .env-flap-top {
+  transform: rotateX(-180deg);
+  z-index: 0;
+}
+
+/* Wax seal */
+.env-wax-seal {
+  width: clamp(44px, 7vw, 64px);
+  height: clamp(44px, 7vw, 64px);
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 38%, #e85c52, #c8463c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  box-shadow: 0 3px 14px rgba(200, 70, 60, 0.4), inset 0 1px 4px rgba(255,255,255,0.25);
+  color: #fff;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(9px, 1.4vw, 13px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  position: relative;
+  z-index: 5;
+  border: 2px solid rgba(255,255,255,0.3);
+  transition: transform 0.3s ease;
+}
+
+.seal-amp {
+  font-size: 0.7em;
+  opacity: 0.8;
+}
+
+#envelope:hover .env-wax-seal {
+  transform: scale(1.05);
+}
+
+/* The letter card inside */
+.env-letter {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 6%;
+  height: 85%;
+  background: linear-gradient(180deg, #fffaf8 0%, #fff5f0 100%);
+  border-radius: 3px;
+  border: 1px solid rgba(200, 112, 106, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transform: translateY(10px);
+  opacity: 0;
+  transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s,
+              opacity 0.6s ease 0.5s;
+  box-shadow: 0 -8px 30px rgba(200, 112, 106, 0.12);
+  overflow: hidden;
+}
+
+.env-letter::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='3' height='3' viewBox='0 0 3 3' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='.4' fill='rgba(200,112,106,0.06)'/%3E%3C/svg%3E");
+}
+
+#envelope.open .env-letter {
+  transform: translateY(-62%);
+  opacity: 1;
+}
+
+.letter-inner {
+  text-align: center;
+  padding: clamp(14px, 3vw, 28px);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.letter-eyebrow {
+  font-family: 'Jost', sans-serif;
+  font-size: clamp(7px, 1vw, 9px);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(107, 46, 42, 0.55);
+}
+
+.letter-script {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(22px, 4.5vw, 40px);
+  color: var(--rose, #C8706A);
+  line-height: 1.1;
+  text-shadow: 0 1px 8px rgba(200, 112, 106, 0.2);
+}
+
+.letter-date {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(10px, 1.3vw, 13px);
+  letter-spacing: 2.5px;
+  color: rgba(107, 46, 42, 0.6);
+}
+
+.letter-divider {
+  width: 48px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blush, #E8998D), transparent);
+  margin: 4px 0;
+}
+
+.letter-verse {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(10px, 1.4vw, 13px);
+  color: rgba(107, 46, 42, 0.5);
+  line-height: 1.5;
+}
+
+/* Open invitation button */
+#view-btn {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: clamp(8px, 1.5vw, 11px) clamp(18px, 3vw, 28px);
+  background: linear-gradient(135deg, var(--blush, #E8998D), var(--rose, #C8706A));
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  font-family: 'Jost', sans-serif;
+  font-size: clamp(8px, 1vw, 10px);
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(200, 112, 106, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease 1.4s, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#envelope.open #view-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#view-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+#view-btn:hover::before { left: 100%; }
+#view-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(200, 112, 106, 0.5);
+}
+
+/* Hint */
+#env-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(107, 46, 42, 0.55);
+  font-family: 'Jost', sans-serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  animation: hint-pulse 2s ease-in-out infinite;
+  transition: opacity 0.5s ease;
+}
+
+#env-hint.hidden { opacity: 0; pointer-events: none; }
+
+.hint-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(200, 112, 106, 0.6);
+  animation: dot-pulse 2s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%       { transform: scale(1.4); opacity: 1; }
+}
+
+@keyframes hint-pulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 0.9; }
+}
+
+/* Responsive flap sizes via JS — fallback */
+@media (max-width: 480px) {
+  .env-flap-left  { border-width: 0 0 130px 140px; }
+  .env-flap-right { border-width: 130px 0 0 140px; }
+}
+</style>
+
+<script>
+(function() {
+  // Dynamically set flap sizes matching envelope dimensions
+  function sizeFlapTriangles() {
+    const env = document.getElementById('envelope');
+    if (!env) return;
+    const w = env.offsetWidth;
+    const h = env.offsetHeight;
+    const half = Math.round(w / 2);
+    const flapH = Math.round(h * 0.52);
+    document.querySelectorAll('.env-flap-left').forEach(el => {
+      el.style.borderWidth = `0 0 ${flapH}px ${half}px`;
+    });
+    document.querySelectorAll('.env-flap-right').forEach(el => {
+      el.style.borderWidth = `${flapH}px 0 0 ${half}px`;
+    });
+  }
+  window.addEventListener('load', sizeFlapTriangles);
+  window.addEventListener('resize', sizeFlapTriangles);
+
+  let opened = false;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const envelope = document.getElementById('envelope');
+    const hint = document.getElementById('env-hint');
+
+    envelope.addEventListener('click', function() {
+      if (opened) return;
+      opened = true;
+      envelope.classList.add('open');
+      if (hint) hint.classList.add('hidden');
+    });
+  });
+
+  window.openWebsite = function() {
+    const overlay = document.getElementById('envelope-overlay');
+    overlay.classList.add('hide');
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      // Allow scrolling the main page
+      document.body.style.overflow = '';
+    }, 1300);
+  };
+
+  // Prevent main page scroll while overlay is active
+  document.addEventListener('DOMContentLoaded', function() {
+    document.body.style.overflow = 'hidden';
+  });
+})();
+</script>
+
+
   <div id="progress"></div>
   <button id="mbtn" aria-label="Toggle music">♪</button>
 
